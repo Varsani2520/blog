@@ -63,9 +63,9 @@ public class postConrollers {
     public ResponseEntity<PostResponse> getAllPost(
             @RequestParam(value = "pageNumber", required = false, defaultValue = "1") Integer pageNumber,
             @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
-            @RequestParam(value="sortBy",defaultValue = "id",required = false) String sortBy,
-            @RequestParam(value="sortDirection",defaultValue = "asc",required=false) String sortDirection) {
-        PostResponse postResponse = this.postservice.getAllPost(pageNumber, pageSize,sortBy,sortDirection);
+            @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
+            @RequestParam(value = "sortDirection", defaultValue = "asc", required = false) String sortDirection) {
+        PostResponse postResponse = this.postservice.getAllPost(pageNumber, pageSize, sortBy, sortDirection);
         return new ResponseEntity<PostResponse>(postResponse, HttpStatus.OK);
     }
 
@@ -89,5 +89,11 @@ public class postConrollers {
         PostDTO updatepost = this.postservice.updatePost(postdto, postId);
         return new ResponseEntity<>(updatepost, HttpStatus.OK);
 
+    }
+
+    @GetMapping("/post/search/{keyword}")
+    public ResponseEntity<List<PostDTO>> searchPostByTitle(@PathVariable String keyword) {
+        List<PostDTO> postdto = this.postservice.searchPosts(keyword);
+        return new ResponseEntity<List<PostDTO>>(postdto, HttpStatus.OK);
     }
 }
