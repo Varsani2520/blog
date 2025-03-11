@@ -1,6 +1,9 @@
 package com.blog.blog.services;
 
+import java.io.IOException;
 import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.blog.blog.payload.PostDTO;
 import com.blog.blog.payload.PostResponse;
@@ -8,7 +11,7 @@ import com.blog.blog.payload.PostResponse;
 public interface PostService {
 
     // create
-    PostDTO createPost(PostDTO post,Integer userId,Integer catId);
+    PostDTO createPost(PostDTO post,Integer userId,Integer catId,MultipartFile imageName) throws IOException;
 
     // update
     PostDTO updatePost(PostDTO post, Integer postId);

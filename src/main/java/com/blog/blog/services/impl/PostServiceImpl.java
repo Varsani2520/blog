@@ -1,7 +1,13 @@
 package com.blog.blog.services.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -12,6 +18,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.blog.blog.Entities.Category;
 import com.blog.blog.Entities.Post;
@@ -37,18 +44,34 @@ public class PostServiceImpl implements PostService {
     private CategoryRepo catRepo;
 
     @Override
-    public PostDTO createPost(PostDTO postdto, Integer userId, Integer catId) {
-
+    public PostDTO createPost(PostDTO postdto, Integer userId, Integer catId, MultipartFile imageFile)
+            throws IOException {
         User user = this.userRepo.findById(userId).orElseThrow(() -> new ResourceNotFound("user", "id", userId));
-
         Category cat = this.catRepo.findById(catId).orElseThrow(() -> new ResourceNotFound("cat", "id", catId));
 
         Post post = this.modelMapper.map(postdto, Post.class);
-        post.setImageName("default.jpg");
         post.setAdded_Date(new Date());
-
         post.setUser(user);
         post.setCategory(cat);
+
+        // ✅ Handle Image Upload
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String fileName = UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();
+            String uploadDir = "uploads/";
+
+            // Save the file locally
+            File uploadPath = new File(uploadDir);
+            if (!uploadPath.exists()) {
+                uploadPath.mkdirs();
+            }
+
+            Path filePath = Paths.get(uploadDir + fileName);
+            Files.write(filePath, imageFile.getBytes());
+
+            post.setImageName(fileName);
+        } else {
+            post.setImageName("default.jpg");
+        }
 
         Post newPost = this.postrepo.save(post);
         return this.modelMapper.map(newPost, PostDTO.class);

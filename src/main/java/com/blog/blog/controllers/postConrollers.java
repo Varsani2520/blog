@@ -1,5 +1,6 @@
 package com.blog.blog.controllers;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.blog.blog.config.AppConstant;
 import com.blog.blog.payload.ApiResponse;
@@ -33,15 +35,22 @@ public class postConrollers {
     private PostService postservice;
 
     // create
-    @PostMapping("/userId/{userId}/category/{catId}/posts")
-    public ResponseEntity<PostDTO> createPost(
-            @Valid @RequestBody PostDTO postdto,
-            @PathVariable Integer userId,
-            @PathVariable Integer catId) {
+    @PostMapping("/user/{userId}/category/{catId}/posts")
+public ResponseEntity<PostDTO> createPost(
+        @RequestParam("title") String title,
+        @RequestParam("content") String content,
+        @RequestParam(value = "image", required = false) MultipartFile imageFile,
+        @PathVariable Integer userId,
+        @PathVariable Integer catId) throws IOException {
 
-        PostDTO savepost = this.postservice.createPost(postdto, userId, catId);
-        return new ResponseEntity<>(savepost, HttpStatus.CREATED);
-    }
+    // Create PostDTO object manually
+    PostDTO postdto = new PostDTO();
+    postdto.setTitle(title);
+    postdto.setContent(content);
+
+    PostDTO savedPost = this.postservice.createPost(postdto, userId, catId, imageFile);
+    return new ResponseEntity<>(savedPost, HttpStatus.CREATED);
+}
 
     // get by user
     @GetMapping("/user/{userId}/posts")
