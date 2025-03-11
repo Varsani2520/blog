@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.blog.blog.Entities.User;
-import com.blog.blog.Entities.UserDTO;
 import com.blog.blog.exceptions.ResourceNotFound;
+import com.blog.blog.payload.UserDTO;
 import com.blog.blog.repositories.UserRepo;
 import com.blog.blog.services.UserService;
 

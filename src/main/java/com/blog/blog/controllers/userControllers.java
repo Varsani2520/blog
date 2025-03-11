@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,20 +15,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.blog.blog.Entities.UserDTO;
 import com.blog.blog.payload.ApiResponse;
+import com.blog.blog.payload.UserDTO;
 import com.blog.blog.services.UserService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/users")
-
+@Validated
 public class userControllers {
     @Autowired
     private UserService uService;
 
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userdto) {
-        uService.createUser(userdto);
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userdto) {
+        this.uService.createUser(userdto);
         return new ResponseEntity<>(userdto, HttpStatus.CREATED);
     }
 
@@ -43,14 +46,14 @@ public class userControllers {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable int id, @RequestBody UserDTO udto) {
+    public ResponseEntity<UserDTO> updateUser(@Valid @PathVariable Integer id, @RequestBody UserDTO udto) {
         UserDTO user = this.uService.updateUser(udto, id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteUserById(@PathVariable int id) {
+    public ApiResponse deleteUserById(@PathVariable Integer id) {
         this.uService.deleteUser(id);
-        return new ResponseEntity<ApiResponse>(new ApiResponse("user deleted sucess", true), HttpStatus.OK);
+        return new ApiResponse("user deleted sucess", true);
     }
 }
