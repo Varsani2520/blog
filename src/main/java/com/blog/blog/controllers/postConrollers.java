@@ -62,8 +62,10 @@ public class postConrollers {
     @GetMapping("/posts")
     public ResponseEntity<PostResponse> getAllPost(
             @RequestParam(value = "pageNumber", required = false, defaultValue = "1") Integer pageNumber,
-            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize) {
-        PostResponse postResponse = this.postservice.getAllPost(pageNumber, pageSize);
+            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+            @RequestParam(value="sortBy",defaultValue = "id",required = false) String sortBy,
+            @RequestParam(value="sortDirection",defaultValue = "asc",required=false) String sortDirection) {
+        PostResponse postResponse = this.postservice.getAllPost(pageNumber, pageSize,sortBy,sortDirection);
         return new ResponseEntity<PostResponse>(postResponse, HttpStatus.OK);
     }
 
